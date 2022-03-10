@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api-demo-logging:
+    image: ${DOCKER_REGISTRY-}demologgingseq
+    container_name: "api-demo-logging"
+    build:
+      context: .
+      dockerfile: Demo.Logging.Seq/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=SECRETPASSWORD
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    ports:
+      - "8080:80"
+      - "8181:443"
+    volumes:
+      - ~/.aspnet/https:/https:ro
+      #- ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      #- ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  seq-demo-logging:
+    image: datalust/seq:latest
+    container_name: "seq-demo-logging"
+    restart: unless-stopped
+    ports:
+      - 5380:80   # UI
+      - 5341:5341 # Data ingest
+    environment:      
+      - ACCEPT_EULA=Y
+  smtp-demo-logging:
+    image: rnwood/smtp4dev
+    container_name: "smtp-demo-logging"
+    restart: always
+    ports:
+      - "5010:80"

@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "api-demo-logging",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "api-demo-logging": "StartDebugging",
+        "seq-demo-logging": "StartWithoutDebugging",
+        "smtp-demo-logging": "StartWithoutDebugging"
+      }
+    }
+  }
+}
