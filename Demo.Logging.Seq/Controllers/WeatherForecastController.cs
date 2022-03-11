@@ -8,35 +8,46 @@ namespace Demo.Logging.Seq.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<WeatherForecastController> _logger;
 
         private readonly IEmailService _emailService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IEmailService emailService)
+        private readonly IWeatherForecastService _weatherForecastService;
+
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IEmailService emailService, IWeatherForecastService weatherForecastService)
         {
-            _logger = logger;
-            _emailService = emailService;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            _weatherForecastService = weatherForecastService ?? throw new ArgumentNullException(nameof(weatherForecastService));
 
             _logger.LogInformation($"{nameof(WeatherForecastController)} has been instantiated.");
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("", Name = "GetWeatherForecast")]
+        public IActionResult Get()
         {
             _logger.LogInformation($"{nameof(Get)} has been invoked.");
 
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var weatherForecast = _weatherForecastService.GetByCity(string.Empty);
+
+            return Ok(weatherForecast);
+        }
+
+        [HttpGet("{city}", Name = "GetWeatherForecastByCity")]
+        public IActionResult GetByCity([FromRoute] string city)
+        {
+            _logger.LogInformation($"{nameof(GetByCity)} has been invoked.");
+
+            var weatherForecast = _weatherForecastService.GetByCity(city);
+
+            return Ok(weatherForecast);
+        }
+
+        [HttpPost]
+        public IActionResult Post(WeatherForecast weatherForecast)
+        {
+            _logger.LogInformation($"{nameof(Post)} has been invoked.");
+            return CreatedAtAction(nameof(GetByCity), new { city = weatherForecast.City }, weatherForecast);
         }
 
         [HttpGet("Throw")]

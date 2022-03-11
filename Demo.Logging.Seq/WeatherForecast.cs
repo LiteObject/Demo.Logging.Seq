@@ -1,7 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Demo.Logging.Seq
 {
     public class WeatherForecast
     {
+        [Required]
+        [StringLength(25, MinimumLength = 3)]
+        public string? City { get; set; }
+
         public DateTime Date { get; set; }
 
         public int TemperatureC { get; set; }

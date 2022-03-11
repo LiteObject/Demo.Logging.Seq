@@ -36,11 +36,14 @@ builder.Services.AddControllers(options =>
 
 });
 
+// builder.Services.AddTransient<ProblemDetailsFactory, SampleProblemDetailsFactory>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
 var app = builder.Build();
 
